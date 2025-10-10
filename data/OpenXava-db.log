@@ -1,6 +1,7 @@
 /*C4*/SET SCHEMA PUBLIC
 DISCONNECT
 /*C5*/SET SCHEMA PUBLIC
-create table Producto (numero integer not null, descripcion varchar(50), primary key (numero))
-INSERT INTO PRODUCTO VALUES(3,'Es un buen producto')
-COMMIT
+alter table Cliente add column codigoPostal integer
+alter table Cliente add column municipio varchar(20)
+alter table Cliente add column provincia varchar(30)
+alter table Cliente add column viaPublica varchar(30)
