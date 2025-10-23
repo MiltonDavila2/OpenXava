@@ -17,7 +17,7 @@ public class Producto {
     String descripcion;
 
     @ManyToOne(fetch = FetchType.LAZY,optional = true) @DescriptionsList
-    Categoria categoria;
+    com.tuempresa.facturacion.modelo.Categoria categoria;
 
     @Money
     BigDecimal precio;

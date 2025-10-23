@@ -2,45 +2,27 @@ package org.example.OpenXava.modelo;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.example.OpenXava.calculadores.CalculadorSiguienteNumeroParaAnyo;
-import org.hibernate.annotations.GenericGenerator;
-import org.openxava.annotations.*;
-import org.openxava.calculators.CurrentLocalDateCalculator;
-import org.openxava.calculators.CurrentYearCalculator;
+import org.openxava.annotations.CollectionView;
+import org.openxava.annotations.View;
 
-import javax.persistence.*;
-import java.time.LocalDate;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import java.util.Collection;
 
 @Entity @Getter @Setter
-public class Factura {
 
-    @Id
-    @GeneratedValue(generator = "system-uuid")
-    @Hidden
-    @GenericGenerator(name = "system-uuid",strategy = "uuid")
-    @Column(length = 32)
-    String oid;
+@View(extendsView="super.DEFAULT", // Extiende de la vista de DocumentoComercial
+        members="pedidos { pedidos }" // Añadimos pedidos dentro de una pestaña
+)
 
-    @DefaultValueCalculator(CurrentYearCalculator.class)
-    @Column(length = 4)
-    int anyo;
-
-    @Column(length = 6)
-    @DefaultValueCalculator(value = CalculadorSiguienteNumeroParaAnyo.class,
-                           properties = @PropertyValue(name="anyo"))
-    int numero;
-
-    @Required
-    @DefaultValueCalculator(CurrentLocalDateCalculator.class)
-    LocalDate fecha;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    Cliente cliente;
-
-    @ElementCollection @ListProperties("producto.numero, producto.descripcion, cantidad")
-    Collection<Detalle> detalles;
-
-    @Stereotype("MEMO")
-    String Observaciones;
+@View( name="SinClienteNiPedidos", // Una vista llamada SinClienteNiPedidos
+        members=                       // que no incluye cliente ni pedidos
+                "anyo, numero, fecha;" +   // Ideal para usarse desde Pedido
+                        "detalles;" +
+                        "observaciones"
+)
+public class Factura extends DocumentoComercial {
+    @OneToMany(mappedBy="factura")
+    @CollectionView("SinClienteNiFactura")
+    Collection<Pedido> pedidos;
 }

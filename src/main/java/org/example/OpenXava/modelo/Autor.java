@@ -11,7 +11,7 @@ import javax.persistence.*;
 import java.util.Collection;
 
 @Entity @Getter @Setter
-public class Autor {
+public class Autor extends Identificable {
 
     @Id
     @GeneratedValue(generator = "system-uuid")
