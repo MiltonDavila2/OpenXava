@@ -9,6 +9,8 @@ import org.openxava.calculators.CurrentLocalDateCalculator;
 import org.openxava.calculators.CurrentYearCalculator;
 
 import javax.persistence.*;
+import javax.validation.constraints.Digits;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collection;
 
@@ -48,9 +50,30 @@ public class DocumentoComercial extends Identificable{
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     Cliente cliente;
 
-    @ElementCollection @ListProperties("producto.numero, producto.descripcion, cantidad")
-    Collection<Detalle> detalles;
+    @ElementCollection
+    @ListProperties(
+            "producto.numero, producto.descripcion, cantidad, precioPorUnidad, " +
+                    "importe+[" +
+                    "documentoComercial.porcentajeIVA," +
+                    "documentoComercial.iva," +
+                    "documentoComercial.importeTotal" +
+                    "]"
+    )
+    private Collection<Detalle> detalles;
 
     @Stereotype("MEMO")
     String Observaciones;
+
+    @Digits(integer=2, fraction=0) // Para indicar su tamaño
+    BigDecimal porcentajeIVA;
+
+    @ReadOnly
+    @Money
+    @Calculation("sum(detalles.importe) * porcentajeIVA / 100")
+    BigDecimal iva;
+
+    @ReadOnly
+    @Money
+    @Calculation("sum(detalles.importe) + iva")
+    BigDecimal importeTotal;
 }

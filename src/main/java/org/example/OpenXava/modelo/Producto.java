@@ -17,9 +17,9 @@ public class Producto {
     String descripcion;
 
     @ManyToOne(fetch = FetchType.LAZY,optional = true) @DescriptionsList
-    com.tuempresa.facturacion.modelo.Categoria categoria;
+    Categoria categoria;
 
-    @Money
+    @Money @Getter
     BigDecimal precio;
 
     @Files
@@ -32,4 +32,8 @@ public class Producto {
     @ManyToOne(fetch=FetchType.LAZY)
     @DescriptionsList
     Autor autor;
+
+    public BigDecimal getPrecio() {
+        return precio;
+    }
 }
